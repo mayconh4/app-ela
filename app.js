@@ -781,4 +781,92 @@ function renderProMetas() {
   }).join('');
 
   // clientes para fidelizar (inativas / com fidelidade alta)
-  const clientes = unique
+  const clientes = uniqueClientes();
+  const fidList = clientes.map(c => `
+    <div class="item" style="cursor:default">
+      <div class="avatar soft">${initials(c.nome)}</div>
+      <div class="meta"><div class="t">${c.nome}</div>
+        <div class="s">Fidelidade ${DB.fidelidade[c.cpf]||0}/${CONFIG.fidelidadeMeta}</div></div>
+      <button class="btn sm" onclick="lembrarWpp('${c.wpp}','${c.nome}')">${ic('i-wpp')} Lembrar</button>
+    </div>`).join('');
+
+  show('scr-pro-metas', `
+    ${proHeader('Metas')}
+    ${cards}
+    <h3 style="margin:18px 2px 12px">Fidelização de clientes</h3>
+    <p class="faint" style="font-size:12.5px;margin:-8px 2px 12px">Envie um lembrete no WhatsApp com mensagem pronta.</p>
+    ${fidList}
+  `);
+}
+function configMeta(k) {
+  openSheet(`
+    <h2 class="section-title" style="margin-top:0">Configurar meta</h2>
+    <div class="field"><label>Valor da meta (${k})</label><input id="metaVal" type="number" value="${DB.metas[k]}"></div>
+    <button class="btn block" onclick="salvarMeta('${k}')">Salvar meta</button>`);
+}
+function salvarMeta(k) { DB.metas[k] = +el('metaVal').value || DB.metas[k]; save(); closeSheet(); renderProMetas(); toast('Meta atualizada'); }
+function uniqueClientes() {
+  const seen = {}, out = [];
+  DB.agendamentos.forEach(a => { if(!seen[a.cpf]){ seen[a.cpf]=1; out.push({nome:a.cliente, cpf:a.cpf, wpp:a.wpp}); }});
+  return out;
+}
+function lembrarWpp(wpp, nome) {
+  const msg = encodeURIComponent(`Oi ${nome}! Sentimos sua falta no Studio Bella 💆‍♀️ Que tal agendar seu próximo horário? Temos novidades esperando por você!`);
+  window.open(`https://wa.me/55${wpp.replace(/\D/g,'')}?text=${msg}`, '_blank');
+}
+
+/* ===========================================================
+   21. MENU DE USUÁRIO (troca de perfil / minha conta)
+   =========================================================== */
+function openUserMenu() {
+  openSheet(`
+    <h2 class="section-title" style="margin-top:0">Conta</h2>
+    <div class="item ${FLOW.perfil==='cliente'?'selected':''}" onclick="setPerfil('cliente')">
+      <div class="avatar soft">${ic('i-user')}</div>
+      <div class="meta"><div class="t">Sou cliente</div><div class="s">Agendar atendimentos</div></div>${chev()}</div>
+    <div class="item ${FLOW.perfil==='profissional'?'selected':''}" onclick="setPerfil('profissional')">
+      <div class="avatar">${ic('i-store')}</div>
+      <div class="meta"><div class="t">Sou profissional</div><div class="s">Painel de gestão</div></div>${chev()}</div>
+    <hr class="soft">
+    <div class="item" style="cursor:default"><div class="avatar soft">${ic('i-user')}</div>
+      <div class="meta"><div class="t">Minha conta</div>
+        <div class="s">${DB.cadastroPro?DB.cadastroPro.nome+' · '+DB.cadastroPro.doc:'Sem cadastro profissional'}</div></div></div>
+    <button class="btn ghost block" style="margin-top:8px" onclick="resetDB();closeSheet()">Restaurar dados de exemplo</button>
+  `);
+}
+
+/* ===========================================================
+   22. HELPERS DE UI (header, voltar, sheet, toast, copiar, QR)
+   =========================================================== */
+function proHeader(t) {
+  return `<div class="row between" style="margin:6px 2px 14px">
+    <h2 class="section-title" style="margin:0">${t}</h2>
+    <span class="tag">${DB.cadastroPro?(DB.cadastroPro.tipo==='dona'?'Dono de studio':'Freelancer'):''}</span></div>`;
+}
+function backBtn(to, isPro) {
+  return `<button class="icon-btn" style="margin-bottom:8px" onclick="${isPro?`FLOW.screen='${to}';render()`:`go('${to}')`}">${ic('i-back')}</button>`;
+}
+function openSheet(html) { el('sheetBody').innerHTML = html; el('overlay').classList.add('open'); }
+function closeSheet() { el('overlay').classList.remove('open'); clearInterval(pixTimer); }
+function toast(msg) {
+  const t = el('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function copiar(txt) { navigator.clipboard?.writeText(txt).then(()=>toast('Código copiado!')).catch(()=>toast('Copie manualmente')); }
+// QR fake (visual) — placeholder; produção usa payload PIX real da Iugu
+function fakeQR() {
+  let cells = '';
+  for (let y=0;y<21;y++) for (let x=0;x<21;x++) {
+    const edge = (x<7&&y<7)||(x>13&&y<7)||(x<7&&y>13);
+    if (edge ? ((x%6===0||y%6===0||(x>1&&x<5&&y>1&&y<5)||(x>14&&x<19&&y>1&&y<5)||(x>1&&x<5&&y>14&&y<19))) : (Math.random()>0.5))
+      cells += `<rect x="${x*10}" y="${y*10}" width="10" height="10" fill="#2c2435"/>`;
+  }
+  return `<svg viewBox="0 0 210 210">${cells}</svg>`;
+}
+
+/* ===========================================================
+   23. INIT
+   =========================================================== */
+el('userMenuBtn').addEventListener('click', openUserMenu);
+el('overlay').addEventListener('click', e => { if (e.target === el('overlay')) closeSheet(); });
+render();

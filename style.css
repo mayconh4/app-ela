@@ -56,7 +56,7 @@ body {
 }
 
 .app { width: 100%; max-width: 460px; min-height: 100vh; position: relative;
-  display: flex; flex-direction: column; padding-bottom: 96px; }
+  display: flex; flex-direction: column; padding-top: 68px; padding-bottom: 96px; }
 
 /* ---------- Glass primitives (translúcido leve p/ barras e sheet) ---------- */
 .glass {
@@ -72,8 +72,10 @@ body {
 }
 
 /* ---------- Top bar ---------- */
-.topbar { position: sticky; top: 0; z-index: 40; display: flex; align-items: center;
-  justify-content: space-between; gap: 12px; padding: 18px 18px 12px; background: transparent; }
+.topbar { position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 460px; z-index: 60; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; padding: 16px 18px 12px;
+  background: rgba(252,247,255,0.92); }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 21px; letter-spacing: -0.6px; }
 .brand .logo { width: 36px; height: 36px; border-radius: 12px; background: var(--accent-grad);
   display: grid; place-items: center; box-shadow: 0 5px 14px rgba(170,90,200,0.40); }

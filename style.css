@@ -73,9 +73,7 @@ body {
 
 /* ---------- Top bar ---------- */
 .topbar { position: sticky; top: 0; z-index: 40; display: flex; align-items: center;
-  justify-content: space-between; gap: 12px; padding: 18px 18px 12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0));
-  backdrop-filter: blur(10px); }
+  justify-content: space-between; gap: 12px; padding: 18px 18px 12px; background: transparent; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 21px; letter-spacing: -0.6px; }
 .brand .logo { width: 36px; height: 36px; border-radius: 12px; background: var(--accent-grad);
   display: grid; place-items: center; box-shadow: 0 5px 14px rgba(170,90,200,0.40); }

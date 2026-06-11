@@ -214,8 +214,8 @@ function renderMenu() {
     </div>`;
   }).join('');
   show('scr-menu', `
-    <h2 class="section-title">O que você procura?</h2>
-    <p class="muted" style="margin:-8px 2px 16px">Escolha uma categoria para começar.</p>
+    <div class="eyebrow">BELLA · BELEZA</div>
+    <h2 class="section-title big">O que você<br>procura hoje?</h2>
     <div class="cat-grid">${cards}</div>
   `);
 }
@@ -227,27 +227,26 @@ function selCatMenu(id) { FLOW.sel.cat = id; FLOW.sel.serv = null; FLOW.sel.esta
 function renderEstab() {
   const cat = FLOW.sel.cat;
   const catNome = cat ? CATEGORIAS.find(c => c.id === cat).nome : null;
-  // só estabelecimentos que têm profissional para a categoria escolhida
   const elig = ESTABS.filter(e => !cat || PROFISSIONAIS.some(p => p.estab === e.id && p.cats.includes(cat)));
   const ordered = [...elig].sort((a, b) => dist(a) - dist(b));
   const list = ordered.map(e => {
     const livres = freeSlotsCount(e.id);
-    return `<div class="item" onclick="selEstab('${e.id}')">
-      <div class="avatar soft">${ic('i-store')}</div>
-      <div class="meta">
-        <div class="t">${e.nome}</div>
-        <div class="s">${ic('i-pin','')} ${e.end}</div>
-        <div class="s">${ic('i-star')} ${e.nota} · ${dist(e).toFixed(1)} km · <b style="color:var(--ok)">${livres} horários livres hoje</b></div>
-      </div><svg style="width:18px;height:18px;fill:var(--ink-faint)"><use href="#i-chev"/></svg>
+    const bairro = (e.end.split(' - ')[1] || e.end);
+    const sub = livres === 0 ? 'sem horários hoje' : livres + ' horários disponíveis';
+    return `<div class="item ${livres===0?'disabled':''}" ${livres===0?'':`onclick="selEstab('${e.id}')"`}>
+      <div class="icon-tile">${ic('i-store')}</div>
+      <div class="meta"><div class="t">${e.nome}</div>
+        <div class="s">${bairro} · ${sub}</div></div>
+      <svg class="chev"><use href="#i-chev"/></svg>
     </div>`;
   }).join('');
 
   show('scr-estab', `
     ${backBtn('menu')}
-    <h2 class="section-title">Onde quer ser atendida?</h2>
-    ${catNome ? `<p class="muted" style="margin:-6px 2px 14px">Categoria: <b>${catNome}</b></p>` : ''}
-    <button class="btn block" onclick="acharProxima()">${ic('i-pin')} A mais próxima de você</button>
-    <p class="faint center" style="font-size:12px;margin:10px 0 16px">Usamos sua localização só para ordenar a lista.</p>
+    <div class="eyebrow">${catNome ? catNome.toUpperCase() : 'AGENDAMENTO'}</div>
+    <h2 class="section-title big">Onde quer ser atendida?</h2>
+    <button class="btn block lg" onclick="acharProxima()">${ic('i-pin')} A mais próxima de você</button>
+    <div class="eyebrow" style="margin-top:20px">OU ESCOLHA</div>
     ${list}
   `);
 }

@@ -229,13 +229,16 @@ function renderEstab() {
   const elig = ESTABS.filter(e => !cat || PROFISSIONAIS.some(p => p.estab === e.id && p.cats.includes(cat)));
   const ordered = [...elig].sort((a, b) => dist(a) - dist(b));
   const list = ordered.map(e => {
-    const livres = freeSlotsCount(e.id);
+    const hoje = freeSlotsCount(e.id);
+    const semana = freeSlotsWeek(e.id);
     const bairro = (e.end.split(' - ')[1] || e.end);
-    const sub = livres === 0 ? 'sem horários hoje' : livres + ' horários disponíveis';
-    return `<div class="item ${livres===0?'disabled':''}" ${livres===0?'':`onclick="selEstab('${e.id}')"`}>
+    const sub = hoje > 0 ? hoje + ' horários hoje'
+              : semana > 0 ? 'horários a partir de amanhã'
+              : 'consultar horários';
+    return `<div class="item" onclick="selEstab('${e.id}')">
       <div class="icon-tile">${ic('i-store')}</div>
       <div class="meta"><div class="t">${e.nome}</div>
-        <div class="s">${bairro} · ${sub}</div></div>
+        <div class="s">${bairro} · ${ic('i-star')} ${e.nota} · ${sub}</div></div>
       <svg class="chev"><use href="#i-chev"/></svg>
     </div>`;
   }).join('');
@@ -359,6 +362,11 @@ function renderHorario() {
     ? PROFISSIONAIS.find(p => p.estab===FLOW.sel.estab && p.cats.includes(serv.cat))
     : PROFISSIONAIS.find(p => p.id === FLOW.sel.prof);
 
+  // se o dia atual não tem horário livre, pula para o primeiro dia que tiver
+  if (!buildSlots(prof, FLOW.sel.data).some(s => !s.busy)) {
+    const dia = days.find(d => buildSlots(prof, d.iso).some(s => !s.busy));
+    if (dia) FLOW.sel.data = dia.iso;
+  }
   const slots = buildSlots(prof, FLOW.sel.data);
   const grid = slots.map(s =>
     `<div class="slot ${s.busy?'busy':''} ${FLOW.sel.hora===s.h&&!s.busy?'active':''}"
@@ -404,6 +412,13 @@ function buildSlots(prof, data) {
 function freeSlotsCount(estabId) {
   const profs = PROFISSIONAIS.filter(p => p.estab === estabId);
   return profs.reduce((sum,p)=> sum + buildSlots(p, hojeISO()).filter(s=>!s.busy).length, 0);
+}
+// disponibilidade considerando os próximos 7 dias (não só hoje)
+function freeSlotsWeek(estabId) {
+  const profs = PROFISSIONAIS.filter(p => p.estab === estabId);
+  let total = 0;
+  for (const d of nextDays(7)) total += profs.reduce((sum,p)=> sum + buildSlots(p, d.iso).filter(s=>!s.busy).length, 0);
+  return total;
 }
 
 /* ===========================================================

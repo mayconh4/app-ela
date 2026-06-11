@@ -281,7 +281,7 @@ function fallbackProxima() {
   selEstab(best.id);
 }
 
-function selEstab(id) { FLOW.sel.estab = id; FLOW.sel.cat = null; FLOW.sel.serv = null; go('servicos'); }
+function selEstab(id) { FLOW.sel.estab = id; FLOW.sel.serv = null; go('servicos'); }
 
 /* ===========================================================
    9. CLIENTE — Categoria + Serviço
@@ -289,8 +289,7 @@ function selEstab(id) { FLOW.sel.estab = id; FLOW.sel.cat = null; FLOW.sel.serv 
 function renderServicos() {
   const estab = ESTABS.find(e => e.id === FLOW.sel.estab);
   const cat = FLOW.sel.cat;
-  const chips = CATEGORIAS.map(c =>
-    `<button class="chip ${cat===c.id?'active':''}" onclick="selCat('${c.id}')">${ic(c.icon)}${c.nome}</button>`).join('');
+  const catNome = cat ? CATEGORIAS.find(c => c.id === cat).nome : 'Serviços';
   const servs = SERVICOS.filter(s => !cat || s.cat === cat);
   const list = servs.map(s => `
     <div class="item ${FLOW.sel.serv===s.id?'selected':''}" onclick="selServ('${s.id}')">
@@ -303,9 +302,9 @@ function renderServicos() {
   show('scr-servicos', `
     ${backBtn('estab')}
     ${stepper(2, estab.nome)}
-    <h2 class="section-title">Escolha o serviço</h2>
-    <div class="chips">${chips}</div>
-    ${cat ? list : `<div class="empty">${ic('i-grid')}<div>Escolha uma categoria acima</div></div>`}
+    <h2 class="section-title">${catNome}</h2>
+    <p class="muted" style="margin:-8px 2px 16px">Escolha o serviço desejado</p>
+    ${list}
   `);
 }
 const catIcon = c => CATEGORIAS.find(x=>x.id===c).icon;

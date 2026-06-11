@@ -77,8 +77,13 @@ body {
   justify-content: space-between; gap: 12px; padding: 16px 18px 12px;
   background: rgba(252,247,255,0.92); }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 21px; letter-spacing: -0.6px; }
-.brand .logo { width: 36px; height: 36px; border-radius: 12px; background: var(--accent-grad);
-  display: grid; place-items: center; box-shadow: 0 5px 14px rgba(170,90,200,0.40); }
+.brand .logo { position: relative; width: 38px; height: 38px; border-radius: 13px; overflow: hidden;
+  background: linear-gradient(155deg, #ecd6ff 0%, #f4a9d6 42%, #b069ef 100%);
+  display: grid; place-items: center;
+  box-shadow: 0 6px 14px rgba(150,80,200,.4), inset 0 1.5px 2px rgba(255,255,255,.8), inset 0 -5px 10px rgba(120,50,170,.35); }
+.brand .logo::before { content:''; position:absolute; top:-34%; left:-18%; width:140%; height:70%;
+  background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0)); border-radius:50%; transform: rotate(-12deg); }
+.brand .logo svg { position: relative; z-index:1; }
 .brand .logo svg { width: 21px; height: 21px; fill: #fff; }
 .brand small { display:block; font-size:10px; font-weight:700; color:var(--ink-faint); letter-spacing:1.5px; }
 
@@ -146,13 +151,19 @@ body {
 .item.disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
 .item.disabled:hover { transform: none; }
 
-/* ícone em tile arredondado (estilo da referência) */
-.icon-tile, .avatar { width: 50px; height: 50px; border-radius: 15px; flex: 0 0 auto;
-  display: grid; place-items: center; font-weight: 800; font-size: 17px; color: #fff; }
-.avatar { background: var(--accent-grad); }
-.avatar svg { width: 22px; height: 22px; fill: #fff; }
-.icon-tile, .avatar.soft { background: var(--accent-soft); color: var(--accent); }
-.icon-tile svg, .avatar.soft svg { width: 23px; height: 23px; fill: var(--accent); }
+/* ícone em tile VIDRO 3D glossy (igual ao mockup) — usado em todo o app */
+.icon-tile, .avatar { position: relative; width: 52px; height: 52px; border-radius: 16px; flex: 0 0 auto;
+  display: grid; place-items: center; overflow: hidden; font-weight: 800; font-size: 16px; color: #fff;
+  background: linear-gradient(155deg, #ecd6ff 0%, #f4a9d6 42%, #b069ef 100%);
+  box-shadow: 0 8px 18px rgba(150,80,200,.30),
+              inset 0 1.5px 2px rgba(255,255,255,.8),
+              inset 0 -6px 12px rgba(120,50,170,.35); }
+.icon-tile::before, .avatar::before { content:''; position:absolute; top:-34%; left:-18%;
+  width:140%; height:70%; background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0));
+  border-radius:50%; transform: rotate(-12deg); pointer-events:none; }
+.avatar svg, .icon-tile svg { position: relative; z-index:1; width: 24px; height: 24px; fill: #fff;
+  filter: drop-shadow(0 1px 1px rgba(90,40,130,.4)); }
+.avatar { text-shadow: 0 1px 2px rgba(90,40,130,.35); }
 
 .item .meta { flex: 1; min-width: 0; }
 .item .meta .t { font-weight: 750; font-size: 16px; letter-spacing: -.3px; }

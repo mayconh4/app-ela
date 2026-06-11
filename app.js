@@ -30,7 +30,7 @@ const CATEGORIAS = [
   { id: 'unhas', nome: 'Unhas', icon: 'i-nail' },
   { id: 'cabelo', nome: 'Cabelo', icon: 'i-scissors' },
   { id: 'cilios', nome: 'Cílios', icon: 'i-lash' },
-  { id: 'sobrancelha', nome: 'Sobrancelhas', icon: 'i-eye' },
+  { id: 'sobrancelha', nome: 'Sobrancelhas', icon: 'i-brow' },
   { id: 'estrias', nome: 'Tratamento de estrias', icon: 'i-wave' },
   { id: 'botox', nome: 'Botox (ácido hialurônico)', icon: 'i-drop' }
 ];

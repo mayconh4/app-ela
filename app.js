@@ -214,8 +214,7 @@ function renderMenu() {
     </div>`;
   }).join('');
   show('scr-menu', `
-    <div class="eyebrow">BELLA · BELEZA</div>
-    <h2 class="section-title big">O que você<br>procura hoje?</h2>
+    <h2 class="section-title big" style="margin-top:6px">O que você<br>procura hoje?</h2>
     <div class="cat-grid">${cards}</div>
   `);
 }
@@ -243,7 +242,7 @@ function renderEstab() {
 
   show('scr-estab', `
     ${backBtn('menu')}
-    <div class="eyebrow">${catNome ? catNome.toUpperCase() : 'AGENDAMENTO'}</div>
+    ${stepper(1, catNome ? catNome : 'Agendamento')}
     <h2 class="section-title big">Onde quer ser atendida?</h2>
     <button class="btn block lg" onclick="acharProxima()">${ic('i-pin')} A mais próxima de você</button>
     <div class="eyebrow" style="margin-top:20px">OU ESCOLHA</div>
@@ -300,7 +299,7 @@ function renderServicos() {
 
   show('scr-servicos', `
     ${backBtn('estab')}
-    ${stepper(1, estab.nome)}
+    ${stepper(2, estab.nome)}
     <h2 class="section-title">Escolha o serviço</h2>
     <div class="chips">${chips}</div>
     ${cat ? list : `<div class="empty">${ic('i-grid')}<div>Escolha uma categoria acima</div></div>`}
@@ -328,7 +327,7 @@ function renderProf() {
 
   show('scr-prof', `
     ${backBtn('servicos')}
-    ${stepper(2, estabNome())}
+    ${stepper(3, estabNome())}
     <h2 class="section-title">Com quem?</h2>
     <p class="muted" style="margin:-6px 2px 14px">${serv.nome} · ${money(serv.preco)} · ${serv.dur} min</p>
     ${anyCard}${list}
@@ -367,7 +366,7 @@ function renderHorario() {
 
   show('scr-horario', `
     ${backBtn('prof')}
-    ${stepper(3, estabNome())}
+    ${stepper(4, estabNome())}
     <h2 class="section-title">Quando?</h2>
     <div class="chips">${dayChips}</div>
     <p class="muted" style="margin:6px 2px 12px">Profissional: ${prof.nome} · só mostramos horários livres</p>

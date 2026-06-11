@@ -300,7 +300,8 @@ function renderServicos() {
 
   show('scr-servicos', `
     ${backBtn('estab')}
-    <h2 class="section-title">${estab.nome}</h2>
+    ${stepper(1, estab.nome)}
+    <h2 class="section-title">Escolha o serviço</h2>
     <div class="chips">${chips}</div>
     ${cat ? list : `<div class="empty">${ic('i-grid')}<div>Escolha uma categoria acima</div></div>`}
   `);
@@ -327,6 +328,7 @@ function renderProf() {
 
   show('scr-prof', `
     ${backBtn('servicos')}
+    ${stepper(2, estabNome())}
     <h2 class="section-title">Com quem?</h2>
     <p class="muted" style="margin:-6px 2px 14px">${serv.nome} · ${money(serv.preco)} · ${serv.dur} min</p>
     ${anyCard}${list}
@@ -335,6 +337,14 @@ function renderProf() {
 function selProf(id) { FLOW.sel.prof = id; go('horario'); }
 const initials = n => n.split(' ').slice(0,2).map(x=>x[0]).join('');
 const chev = () => `<svg style="width:18px;height:18px;fill:var(--ink-faint)"><use href="#i-chev"/></svg>`;
+// barra de etapas do agendamento (estilo da referência)
+function stepper(n, ctx) {
+  const total = 4;
+  const segs = Array.from({length: total}, (_, i) => `<div class="step-seg ${i < n ? 'on' : ''}"></div>`).join('');
+  return `<div class="stepper"><div class="step-bar">${segs}</div>
+    <div class="step-label">${ctx} · PASSO ${n} DE ${total}</div></div>`;
+}
+const estabNome = () => { const e = ESTABS.find(x => x.id === FLOW.sel.estab); return e ? e.nome : 'BELLA'; };
 
 /* ===========================================================
    11. CLIENTE — Data + Horário (descontando ocupados/intervalo)
@@ -357,6 +367,7 @@ function renderHorario() {
 
   show('scr-horario', `
     ${backBtn('prof')}
+    ${stepper(3, estabNome())}
     <h2 class="section-title">Quando?</h2>
     <div class="chips">${dayChips}</div>
     <p class="muted" style="margin:6px 2px 12px">Profissional: ${prof.nome} · só mostramos horários livres</p>
@@ -402,6 +413,7 @@ function freeSlotsCount(estabId) {
 function openCheckout() {
   const serv = SERVICOS.find(s => s.id === FLOW.sel.serv);
   openSheet(`
+    ${stepper(4, estabNome())}
     <h2 class="section-title" style="margin-top:0">Pagamento via PIX</h2>
     <div class="card glass" style="margin-bottom:16px">
       <div class="row between"><span class="muted">${serv.nome}</span><b>${money(serv.preco)}</b></div>

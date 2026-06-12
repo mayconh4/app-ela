@@ -32,7 +32,7 @@ const CATEGORIAS = [
   { id: 'cilios', nome: 'Cílios', icon: 'i-lash' },
   { id: 'sobrancelha', nome: 'Sobrancelhas', icon: 'i-brow' },
   { id: 'estrias', nome: 'Tratamento de estrias', icon: 'i-wave' },
-  { id: 'botox', nome: 'Botox (ácido hialurônico)', icon: 'i-drop' }
+  { id: 'botox', nome: 'Revitalização facial', icon: 'i-drop' }
 ];
 
 const SERVICOS = [
@@ -205,17 +205,19 @@ function renderTabbar() {
    7b. CLIENTE — Menu inicial de categorias
    =========================================================== */
 function renderMenu() {
+  // bancada única: um só painel branco com as teclas de acrílico da referência
+  const NOMES = { estrias: 'Tratamento de Estrias' };
   const cards = CATEGORIAS.map(c => {
     const qtd = SERVICOS.filter(s => s.cat === c.id).length;
-    return `<div class="cat-card glass" onclick="selCatMenu('${c.id}')">
-      <div class="cat-ic"><svg><use href="#${c.icon}"/></svg></div>
-      <div class="cat-nome">${c.nome}</div>
-      <div class="cat-qtd">${qtd} serviço${qtd>1?'s':''}</div>
-    </div>`;
+    return `<button class="board-key" onclick="selCatMenu('${c.id}')">
+      <img src="assets/keys/acr-${c.id}.png" alt="" draggable="false">
+      <span class="board-nome">${NOMES[c.id] || c.nome}</span>
+      <span class="board-qtd">${qtd} serviço${qtd>1?'s':''}</span>
+    </button>`;
   }).join('');
   show('scr-menu', `
     <h2 class="section-title big" style="margin-top:6px">O que você<br>procura hoje?</h2>
-    <div class="cat-grid">${cards}</div>
+    <div class="menu-board">${cards}</div>
   `);
 }
 function selCatMenu(id) { FLOW.sel.cat = id; FLOW.sel.serv = null; FLOW.sel.estab = null; go('estab'); }
@@ -887,6 +889,33 @@ function fakeQR() {
   }
   return `<svg viewBox="0 0 210 210">${cells}</svg>`;
 }
+
+/* ===========================================================
+   22b. KEYCAP PRESS ENGINE — mecânica de switch tátil
+   pointerdown: curso descendente (classe .is-pressed) + háptica
+   pointerup:   retorno de mola com overshoot (.is-released)
+   =========================================================== */
+const PRESS_SEL = '.board-key, .btn, .tab, .item, .slot, .icon-btn';
+let _pressedCap = null;
+document.addEventListener('pointerdown', e => {
+  const k = e.target.closest(PRESS_SEL);
+  if (!k || k.disabled || k.classList.contains('disabled') || k.classList.contains('busy')) return;
+  _pressedCap = k;
+  k.classList.remove('is-released');
+  void k.offsetWidth; // reinicia a animação de retorno se ainda ativa
+  k.classList.add('is-pressed');
+  navigator.vibrate?.(8);
+}, { passive: true });
+function _releaseCap() {
+  if (!_pressedCap) return;
+  const k = _pressedCap; _pressedCap = null;
+  k.classList.remove('is-pressed');
+  k.classList.add('is-released');
+  navigator.vibrate?.(4);
+  k.addEventListener('animationend', () => k.classList.remove('is-released'), { once: true });
+}
+document.addEventListener('pointerup', _releaseCap, { passive: true });
+document.addEventListener('pointercancel', _releaseCap, { passive: true });
 
 /* ===========================================================
    23. INIT

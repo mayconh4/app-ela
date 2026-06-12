@@ -20,3 +20,6 @@ build/
 
 # Agente
 .agent/
+
+# Config local do Claude Code
+.claude/

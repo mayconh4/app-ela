@@ -373,10 +373,10 @@ body {
   padding: 30px 16px 24px; 
   cursor: pointer; 
   text-align: center; 
-  background: linear-gradient(135deg, #fefeff 0%, #f7f5f9 100%);
+  background: #fdfdfd;
   border: none; 
-  border-radius: 38px; 
-  box-shadow: 0 16px 32px rgba(120, 90, 160, 0.08), 0 4px 10px rgba(0, 0, 0, 0.02), inset 0 4px 6px #ffffff, inset 0 -4px 10px rgba(120, 90, 160, 0.06);
+  border-radius: 40px; 
+  box-shadow: 0 24px 38px rgba(135, 100, 180, 0.11), 0 8px 16px rgba(0, 0, 0, 0.03), inset 0 3px 6px #ffffff, inset 0 -6px 12px rgba(120, 90, 160, 0.08);
   display: flex; 
   flex-direction: column; 
   align-items: center; 
@@ -384,20 +384,20 @@ body {
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .cat-card:hover { 
-  transform: translateY(-8px) scale(1.03); 
-  box-shadow: 0 24px 44px rgba(120, 90, 160, 0.14), 0 6px 14px rgba(0, 0, 0, 0.03), inset 0 4px 6px #ffffff, inset 0 -4px 10px rgba(120, 90, 160, 0.04); 
+  transform: translateY(-10px) scale(1.04); 
+  box-shadow: 0 32px 52px rgba(135, 100, 180, 0.16), 0 10px 20px rgba(0, 0, 0, 0.04), inset 0 3px 6px #ffffff, inset 0 -6px 12px rgba(120, 90, 160, 0.06); 
 }
 .cat-ic { 
   position: relative; 
-  width: 72px; 
-  height: 72px; 
-  border-radius: 20px; 
+  width: 78px; 
+  height: 78px; 
+  border-radius: 22px; 
   display: grid;
   place-items: center; 
   overflow: hidden;
-  background: linear-gradient(135deg, #ec6fa9 0%, #a264f5 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 10px 22px rgba(162, 100, 245, 0.32), inset 0 2px 4px rgba(255, 255, 255, 0.65), inset 0 -5px 12px rgba(100, 30, 180, 0.45);
+  background: linear-gradient(135deg, #f07ab9 0%, #aa6cf7 100%);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 14px 28px rgba(162, 100, 245, 0.45), inset 0 2.5px 4px rgba(255, 255, 255, 0.85), inset 0 -6px 16px rgba(80, 10, 150, 0.55);
 }
 .cat-ic::before { 
   content: ""; 
@@ -406,8 +406,8 @@ body {
   left: 0; 
   right: 0; 
   height: 50%; 
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%); 
-  border-radius: 18px 18px 0 0; 
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 65%); 
+  border-radius: 20px 20px 0 0; 
   pointer-events: none; 
 }
 .cat-ic::after { 
@@ -416,13 +416,13 @@ body {
   bottom: 0; 
   left: 0; 
   right: 0; 
-  height: 30%; 
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%); 
+  height: 35%; 
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%); 
   pointer-events: none; 
 }
-.cat-ic svg { position: relative; z-index: 1; width: 34px; height: 34px; fill: #fff; filter: drop-shadow(0 2px 4px rgba(90, 40, 130, 0.4)); }
-.cat-nome { font-weight: 900; font-size: 18px; color: #0b0615; letter-spacing: -.4px; line-height: 1.25; font-family: 'Outfit', sans-serif; }
-.cat-qtd { font-size: 13.5px; color: #726a84; font-family: 'Inter', sans-serif; font-weight: 500; }
+.cat-ic svg { position: relative; z-index: 1; width: 36px; height: 36px; fill: #fff; filter: drop-shadow(0 3px 5px rgba(60, 10, 110, 0.55)); }
+.cat-nome { font-weight: 900; font-size: 19px; color: #080312; letter-spacing: -.5px; line-height: 1.25; font-family: 'Outfit', sans-serif; }
+.cat-qtd { font-size: 14px; color: #726a84; font-family: 'Inter', sans-serif; font-weight: 500; }
 
 /* ---------- Slots Grid ---------- */
 .grid { display: grid; gap: 10px; }

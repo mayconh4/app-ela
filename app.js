@@ -208,8 +208,7 @@ function renderMenu() {
   const cards = CATEGORIAS.map(c => {
     const qtd = SERVICOS.filter(s => s.cat === c.id).length;
     return `<div class="cat-card glass" onclick="selCatMenu('${c.id}')">
-      <img class="cat-img" src="icons/${c.id}.png" alt="${c.nome}"
-        onerror="this.outerHTML='<div class=&quot;cat-ic&quot;><svg><use href=&quot;#'+'${c.icon}'+'&quot;/></svg></div>'">
+      <div class="cat-ic"><svg><use href="#${c.icon}"/></svg></div>
       <div class="cat-nome">${c.nome}</div>
       <div class="cat-qtd">${qtd} serviço${qtd>1?'s':''}</div>
     </div>`;
@@ -483,7 +482,7 @@ function confirmarPix() {
   const serv = SERVICOS.find(x=>x.id===s.serv);
   openSheet(`
     <div class="center">
-      <div class="avatar" style="width:70px;height:70px;margin:6px auto 14px;border-radius:22px">${ic('i-check')}</div>
+      <div class="avatar" style="width:70px;height:70px;margin:6px auto 14px;border-radius:22px;background:linear-gradient(135deg,#34d399 0%,#059669 100%);box-shadow:0 8px 22px rgba(5,150,105,0.3)">${ic('i-check')}</div>
       <h2 class="section-title" style="margin-top:0">Pagamento confirmado!</h2>
       <p class="muted">${serv.nome} · ${s.data} às ${s.hora}.${msgFid}</p>
     </div>

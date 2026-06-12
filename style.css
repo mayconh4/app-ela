@@ -294,3 +294,6 @@ hr.soft { border:none; border-top:1px solid var(--border); margin:14px 0; }
 .step-seg { flex: 1; height: 5px; border-radius: 5px; background: rgba(140,120,160,.18); transition: background .25s; }
 .step-seg.on { background: var(--accent-grad); }
 .step-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-top: 11px; }
+
+/* imagem 3D (PNG) do ícone de categoria */
+.cat-img { width: 86px; height: 86px; object-fit: contain; display: block; }

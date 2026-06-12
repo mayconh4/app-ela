@@ -208,7 +208,8 @@ function renderMenu() {
   const cards = CATEGORIAS.map(c => {
     const qtd = SERVICOS.filter(s => s.cat === c.id).length;
     return `<div class="cat-card glass" onclick="selCatMenu('${c.id}')">
-      <div class="cat-ic">${ic(c.icon)}</div>
+      <img class="cat-img" src="icons/${c.id}.png" alt="${c.nome}"
+        onerror="this.outerHTML='<div class=&quot;cat-ic&quot;><svg><use href=&quot;#'+'${c.icon}'+'&quot;/></svg></div>'">
       <div class="cat-nome">${c.nome}</div>
       <div class="cat-qtd">${qtd} serviço${qtd>1?'s':''}</div>
     </div>`;

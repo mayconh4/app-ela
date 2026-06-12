@@ -17,3 +17,6 @@ build/
 # Ambiente / segredos
 .env
 *.local
+
+# Agente
+.agent/

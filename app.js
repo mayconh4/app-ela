@@ -36,22 +36,22 @@ const CATEGORIAS = [
 ];
 
 const SERVICOS = [
-  { id: 's1', cat: 'cabelo', nome: 'Corte feminino', preco: 70, dur: 45 },
-  { id: 's2', cat: 'cabelo', nome: 'Escova', preco: 50, dur: 40 },
-  { id: 's3', cat: 'cabelo', nome: 'Coloração', preco: 180, dur: 120 },
-  { id: 's4', cat: 'cabelo', nome: 'Hidratação', preco: 90, dur: 60 },
-  { id: 's5', cat: 'unhas', nome: 'Manicure', preco: 45, dur: 50 },
-  { id: 's6', cat: 'unhas', nome: 'Pedicure', preco: 50, dur: 50 },
-  { id: 's7', cat: 'unhas', nome: 'Esmaltação em gel', preco: 75, dur: 70 },
-  { id: 's8', cat: 'sobrancelha', nome: 'Design de sobrancelha', preco: 40, dur: 30 },
-  { id: 's9', cat: 'sobrancelha', nome: 'Henna', preco: 55, dur: 45 },
-  { id: 's10', cat: 'cilios', nome: 'Extensão de cílios', preco: 160, dur: 110 },
-  { id: 's11', cat: 'cilios', nome: 'Lifting de cílios', preco: 120, dur: 70 },
-  { id: 's12', cat: 'estrias', nome: 'Tratamento de estrias (sessão)', preco: 150, dur: 60 },
-  { id: 's13', cat: 'estrias', nome: 'Microagulhamento para estrias', preco: 220, dur: 80 },
-  { id: 's14', cat: 'botox', nome: 'Preenchimento com ácido hialurônico', preco: 650, dur: 60 },
-  { id: 's15', cat: 'botox', nome: 'Toxina botulínica (botox facial)', preco: 580, dur: 50 },
-  { id: 's16', cat: 'botox', nome: 'Preenchimento labial', preco: 720, dur: 60 }
+  { id: 's1', cat: 'cabelo', nome: 'Corte feminino', preco: 70, dur: 45, icon: 'i-scissors' },
+  { id: 's2', cat: 'cabelo', nome: 'Escova', preco: 50, dur: 40, icon: 'i-comb' },
+  { id: 's3', cat: 'cabelo', nome: 'Coloração', preco: 180, dur: 120, icon: 'i-drop' },
+  { id: 's4', cat: 'cabelo', nome: 'Hidratação', preco: 90, dur: 60, icon: 'i-drop' },
+  { id: 's5', cat: 'unhas', nome: 'Manicure', preco: 45, dur: 50, icon: 'i-nail' },
+  { id: 's6', cat: 'unhas', nome: 'Pedicure', preco: 50, dur: 50, icon: 'i-foot' },
+  { id: 's7', cat: 'unhas', nome: 'Esmaltação em gel', preco: 75, dur: 70, icon: 'i-spark' },
+  { id: 's8', cat: 'sobrancelha', nome: 'Design de sobrancelha', preco: 40, dur: 30, icon: 'i-brow' },
+  { id: 's9', cat: 'sobrancelha', nome: 'Henna', preco: 55, dur: 45, icon: 'i-face' },
+  { id: 's10', cat: 'cilios', nome: 'Extensão de cílios', preco: 160, dur: 110, icon: 'i-lash' },
+  { id: 's11', cat: 'cilios', nome: 'Lifting de cílios', preco: 120, dur: 70, icon: 'i-eye' },
+  { id: 's12', cat: 'estrias', nome: 'Tratamento de estrias (sessão)', preco: 150, dur: 60, icon: 'i-wave' },
+  { id: 's13', cat: 'estrias', nome: 'Microagulhamento para estrias', preco: 220, dur: 80, icon: 'i-spark' },
+  { id: 's14', cat: 'botox', nome: 'Preenchimento com ácido hialurônico', preco: 650, dur: 60, icon: 'i-syringe' },
+  { id: 's15', cat: 'botox', nome: 'Toxina botulínica (botox facial)', preco: 580, dur: 50, icon: 'i-syringe' },
+  { id: 's16', cat: 'botox', nome: 'Preenchimento labial', preco: 720, dur: 60, icon: 'i-syringe' }
 ];
 
 // horário de trabalho e intervalos por profissional
@@ -293,7 +293,7 @@ function renderServicos() {
   const servs = SERVICOS.filter(s => !cat || s.cat === cat);
   const list = servs.map(s => `
     <div class="item ${FLOW.sel.serv===s.id?'selected':''}" onclick="selServ('${s.id}')">
-      <div class="avatar soft">${ic(catIcon(s.cat))}</div>
+      <div class="avatar soft">${ic(s.icon || catIcon(s.cat))}</div>
       <div class="meta"><div class="t">${s.nome}</div>
         <div class="s">${ic('i-clock')} ${s.dur} min</div></div>
       <div class="price">${money(s.preco)}</div>

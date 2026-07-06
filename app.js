@@ -907,7 +907,7 @@ function renderContaAuth() {
       ${cliente ? `<div class="field"><label>CPF</label><input id="ctCpf" placeholder="000.000.000-00"></div>` : ''}
       <div class="field"><label>E-mail</label><input id="ctEmail" type="email" placeholder="voce@email.com"></div>
       <div class="field"><label>Senha</label><input id="ctSenha" type="password" placeholder="Crie uma senha"></div>
-      <button class="btn block" onclick="fazerCadastro()">Criar conta</button>
+      <button class="btn block" onclick="fazerCadastro()">Concluir cadastro</button>
       <p class="faint" style="text-align:center;margin-top:14px;font-size:13px">Já tem conta?
         <a href="#" onclick="contaModo('login');return false" style="color:var(--accent);font-weight:700">Entrar</a></p>
     `}

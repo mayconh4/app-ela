@@ -100,7 +100,9 @@ function seedDB() {
     comissoes: {},     // override de comissão por profissional (id -> %)
     convites: [],      // ids de profissionais convidados pela Rede
     equipe: [],        // freelancers cadastrados pela dona (persistem)
-    perfil: 'cliente' // cliente | profissional
+    perfil: 'cliente', // cliente | profissional
+    contas: [],        // { email, senha, nome, perfil: 'cliente'|'barbeiro', cpf }
+    sessao: null        // email da conta logada (ou null)
   };
 }
 let DB = load();
@@ -112,6 +114,8 @@ function load() {
   if (!db.comissoes) db.comissoes = {};
   if (!db.convites) db.convites = [];
   if (!db.equipe) db.equipe = [];
+  if (!db.contas) db.contas = [];
+  if (db.sessao === undefined) db.sessao = null;
   return db;
 }
 // reidrata freelancers cadastrados pela dona na lista em memória
@@ -133,7 +137,11 @@ const FLOW = {
   proScreen: 'agenda',
   proTipo: null,                // freelancer | dona
   // seleção do fluxo cliente
-  sel: { estab: null, cat: null, serv: null, prof: null, data: hojeISO(), hora: null }
+  sel: { estab: null, cat: null, serv: null, prof: null, data: hojeISO(), hora: null },
+  // "Minha conta"
+  viewConta: false,
+  contaTab: 'cliente',          // aba selecionada na tela de login/cadastro
+  contaModo: 'login'            // login | cadastro
 };
 
 /* ===========================================================
@@ -154,6 +162,9 @@ function setPerfil(p) {
    =========================================================== */
 function render() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  if (FLOW.viewConta) { el('tabbar').innerHTML = ''; return renderConta(); }
+
   renderTabbar();
 
   if (FLOW.perfil === 'cliente') {
@@ -845,20 +856,132 @@ function lembrarWpp(wpp, nome) {
    21. MENU DE USUÁRIO (troca de perfil / minha conta)
    =========================================================== */
 function openUserMenu() {
+  const conta = contaLogada();
   openSheet(`
-    <h2 class="section-title" style="margin-top:0">Conta</h2>
-    <div class="item ${FLOW.perfil==='cliente'?'selected':''}" onclick="setPerfil('cliente')">
+    <h2 class="section-title" style="margin-top:0">Menu</h2>
+    <div class="item" onclick="closeSheet();abrirConta()">
       <div class="avatar soft">${ic('i-user')}</div>
-      <div class="meta"><div class="t">Sou cliente</div><div class="s">Agendar atendimentos</div></div>${chev()}</div>
-    <div class="item ${FLOW.perfil==='profissional'?'selected':''}" onclick="setPerfil('profissional')">
-      <div class="avatar">${ic('i-store')}</div>
-      <div class="meta"><div class="t">Sou profissional</div><div class="s">Painel de gestão</div></div>${chev()}</div>
-    <hr class="soft">
-    <div class="item" style="cursor:default"><div class="avatar soft">${ic('i-user')}</div>
       <div class="meta"><div class="t">Minha conta</div>
-        <div class="s">${DB.cadastroPro?DB.cadastroPro.nome+' · '+DB.cadastroPro.doc:'Sem cadastro profissional'}</div></div></div>
+        <div class="s">${conta ? conta.nome+' · '+(conta.perfil==='barbeiro'?'Barbeiro':'Cliente') : 'Fazer login ou criar conta'}</div></div>${chev()}</div>
+    <hr class="soft">
     <button class="btn ghost block" style="margin-top:8px" onclick="resetDB();closeSheet()">Restaurar dados de exemplo</button>
   `);
+}
+
+/* ===========================================================
+   21b. MINHA CONTA — login / cadastro / painel do cliente e do barbeiro
+   =========================================================== */
+function contaLogada() { return DB.sessao ? DB.contas.find(c => c.email === DB.sessao) : null; }
+function abrirConta() { FLOW.viewConta = true; FLOW.contaModo = 'login'; render(); window.scrollTo(0, 0); }
+function fecharConta() { FLOW.viewConta = false; render(); }
+function contaTab(t) { FLOW.contaTab = t; render(); }
+function contaModo(m) { FLOW.contaModo = m; render(); }
+
+function renderConta() {
+  const conta = contaLogada();
+  if (conta) return conta.perfil === 'barbeiro' ? renderContaBarbeiro(conta) : renderContaCliente(conta);
+  renderContaAuth();
+}
+
+function renderContaAuth() {
+  const cliente = FLOW.contaTab === 'cliente';
+  show('scr-conta', `
+    <button class="icon-btn" style="margin-bottom:8px" onclick="fecharConta()">${ic('i-back')}</button>
+    <h2 class="section-title">Minha conta</h2>
+    <div class="segment">
+      <button class="${cliente?'active':''}" onclick="contaTab('cliente')">Sou cliente</button>
+      <button class="${!cliente?'active':''}" onclick="contaTab('barbeiro')">Sou barbeiro</button>
+    </div>
+    <div class="segment" style="background:transparent;border:none;box-shadow:none;padding:0;margin-bottom:10px">
+      <button class="${FLOW.contaModo==='login'?'active':''}" onclick="contaModo('login')">Entrar</button>
+      <button class="${FLOW.contaModo==='cadastro'?'active':''}" onclick="contaModo('cadastro')">Criar conta</button>
+    </div>
+    ${FLOW.contaModo === 'login' ? `
+      <div class="field"><label>E-mail</label><input id="ctEmail" type="email" placeholder="voce@email.com"></div>
+      <div class="field"><label>Senha</label><input id="ctSenha" type="password" placeholder="••••••••"></div>
+      <button class="btn block" onclick="fazerLogin()">Entrar</button>
+      <p class="faint" style="text-align:center;margin-top:14px;font-size:13px">Não tem conta?
+        <a href="#" onclick="contaModo('cadastro');return false" style="color:var(--accent);font-weight:700">Criar conta</a></p>
+    ` : `
+      <div class="field"><label>Nome</label><input id="ctNome" placeholder="Seu nome"></div>
+      ${cliente ? `<div class="field"><label>CPF</label><input id="ctCpf" placeholder="000.000.000-00"></div>` : ''}
+      <div class="field"><label>E-mail</label><input id="ctEmail" type="email" placeholder="voce@email.com"></div>
+      <div class="field"><label>Senha</label><input id="ctSenha" type="password" placeholder="Crie uma senha"></div>
+      <button class="btn block" onclick="fazerCadastro()">Concluir cadastro</button>
+      <p class="faint" style="text-align:center;margin-top:14px;font-size:13px">Já tem conta?
+        <a href="#" onclick="contaModo('login');return false" style="color:var(--accent);font-weight:700">Entrar</a></p>
+    `}
+  `);
+}
+
+function fazerLogin() {
+  const email = el('ctEmail').value.trim().toLowerCase(), senha = el('ctSenha').value;
+  if (!email || !senha) { toast('Preencha e-mail e senha'); return; }
+  const conta = DB.contas.find(c => c.email === email && c.senha === senha && c.perfil === FLOW.contaTab);
+  if (!conta) { toast('E-mail, senha ou tipo de conta incorretos'); return; }
+  DB.sessao = conta.email; save(); toast(`Bem-vinda, ${conta.nome}!`); render();
+}
+
+function fazerCadastro() {
+  const nome = el('ctNome').value.trim();
+  const email = el('ctEmail').value.trim().toLowerCase();
+  const senha = el('ctSenha').value;
+  const cpf = FLOW.contaTab === 'cliente' ? el('ctCpf').value.trim() : null;
+  if (!nome || !email || !senha) { toast('Preencha todos os campos'); return; }
+  if (DB.contas.some(c => c.email === email)) { toast('Já existe uma conta com esse e-mail'); return; }
+  const conta = { nome, email, senha, cpf, perfil: FLOW.contaTab };
+  DB.contas.push(conta); DB.sessao = email; save();
+  toast('Conta criada com sucesso!'); render();
+}
+
+function sairConta() { DB.sessao = null; save(); toast('Você saiu da conta'); render(); }
+
+// painel do cliente logado: quantos cortes já fez em cada barbearia
+function renderContaCliente(conta) {
+  const feitos = DB.agendamentos.filter(a => a.status === 'paid' && conta.cpf && a.cpf === conta.cpf);
+  const porEstab = {};
+  feitos.forEach(a => { porEstab[a.estab] = (porEstab[a.estab] || 0) + 1; });
+  const linhas = Object.keys(porEstab).length ? Object.entries(porEstab).map(([eid, n]) => {
+    const est = ESTABS.find(e => e.id === eid);
+    return `<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--glass-border)">
+      <span>${est ? est.nome : eid}</span><b>${n} corte${n>1?'s':''}</b></div>`;
+  }).join('') : `<p class="faint">Você ainda não tem cortes registrados com o CPF cadastrado.</p>`;
+
+  show('scr-conta', `
+    <button class="icon-btn" style="margin-bottom:8px" onclick="fecharConta()">${ic('i-back')}</button>
+    <h2 class="section-title">Olá, ${conta.nome.split(' ')[0]}</h2>
+    <div class="card glass">
+      <h3>Cortes por barbearia</h3><hr class="soft">
+      ${linhas}
+    </div>
+    <button class="btn ghost block" style="margin-top:14px" onclick="sairConta()">Sair da conta</button>
+  `);
+}
+
+// painel do barbeiro logado: atalho para o dashboard (metas, gerência, agenda...)
+function renderContaBarbeiro(conta) {
+  const pagos = DB.agendamentos.filter(a => a.status === 'paid');
+  const money2 = arr => money(arr.reduce((t,a)=> t + (SERVICOS.find(s=>s.id===a.serv)?.preco||0), 0));
+  show('scr-conta', `
+    <button class="icon-btn" style="margin-bottom:8px" onclick="fecharConta()">${ic('i-back')}</button>
+    <h2 class="section-title">Olá, ${conta.nome.split(' ')[0]}</h2>
+    <div class="stats">
+      <div class="stat glass"><div class="v">${money2(pagos.filter(a=>a.data===hojeISO()))}</div><div class="l">Hoje</div></div>
+      <div class="stat glass"><div class="v">${money2(pagos)}</div><div class="l">No total</div></div>
+      <div class="stat glass"><div class="v">${money(DB.metas.mes)}</div><div class="l">Meta do mês</div></div>
+    </div>
+    <div class="card glass">
+      <h3>Painel de gestão</h3><hr class="soft">
+      <p class="faint" style="margin-bottom:10px">Acesse a agenda completa, resumo financeiro, metas e gerência da equipe.</p>
+      <button class="btn block" onclick="abrirPainelBarbeiro()">Abrir painel completo</button>
+    </div>
+    <button class="btn ghost block" style="margin-top:14px" onclick="sairConta()">Sair da conta</button>
+  `);
+}
+function abrirPainelBarbeiro() {
+  FLOW.viewConta = false; FLOW.perfil = 'profissional'; DB.perfil = 'profissional'; save();
+  FLOW.screen = DB.cadastroPro ? 'agenda-wrap' : 'onboard'; FLOW.proScreen = 'agenda';
+  render();
 }
 
 /* ===========================================================
